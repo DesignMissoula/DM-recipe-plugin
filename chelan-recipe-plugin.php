@@ -4,12 +4,25 @@
 Plugin Name:       Chelan Recipe Plugin
 Plugin URI:        https://chelanfruit.com
 Description:       Recipes
-Version:           1.0.5
+Version:           1.0.6
 Author:            Bradford Knowlton
 GitHub Plugin URI: https://github.com/DesignMissoula/chelan-recipe-plugin
 Requires WP:       3.8
 Requires PHP:      5.3
 */
+
+function recipe_rewrite_flush() {
+    // First, we "add" the custom post type via the above written function.
+    // Note: "add" is written with quotes, as CPTs don't get added to the DB,
+    // They are only referenced in the post_type column with a post entry, 
+    // when you add a post of this CPT.
+    register_cpt_recipe();
+
+    // ATTENTION: This is *only* done during plugin activation hook in this example!
+    // You should *NEVER EVER* do this on every page load!!
+    flush_rewrite_rules();
+}
+register_activation_hook( __FILE__, 'recipe_rewrite_flush' );	
 
 add_action( 'init', 'register_cpt_recipe' );
 
@@ -47,7 +60,7 @@ function register_cpt_recipe() {
         'has_archive' => true,
         'query_var' => true,
         'can_export' => true,
-        'rewrite' => true,
+        'rewrite' => array( 'slug' => 'recipes' ),
         'capability_type' => 'post',
         'register_meta_box_cb' => 'add_recipe_metaboxes'
     );
@@ -383,7 +396,7 @@ function wpt_save_recipes_meta($post_id, $post) {
 	
 	// verify this came from the our screen and with proper authorization,
 	// because save_post can be triggered at other times
-	if ( !wp_verify_nonce( $_POST['recipemeta_noncename'], plugin_basename(__FILE__) )) {
+	if ( !isset($_POST['recipemeta_noncename']) || !wp_verify_nonce( $_POST['recipemeta_noncename'], plugin_basename(__FILE__) )) {
 	return $post->ID;
 	}
 
