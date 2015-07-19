@@ -4,7 +4,7 @@
 Plugin Name:       Chelan Recipe Plugin
 Plugin URI:        https://chelanfruit.com
 Description:       Recipes
-Version:           1.0.7
+Version:           1.1.7
 Author:            Bradford Knowlton
 GitHub Plugin URI: https://github.com/DesignMissoula/chelan-recipe-plugin
 Requires WP:       3.8
@@ -122,7 +122,8 @@ function edit_recipe_columns( $columns ) {
 		'title' => __( 'recipe' ),
 		'totaltime' => __( 'Total Time' ),
 		'preptime' => __( 'Prep Time' ),
-		'cooktime' => __( 'Cook Time' ),
+		// 'cooktime' => __( 'Cook Time' ),
+		'servings' => __( 'Servings' ),
 		'date' => __('Date')
 		
 	);
@@ -190,6 +191,23 @@ function manage_recipe_columns( $column, $post_id ) {
 				echo format_duration($cooktime);
 
 		break;
+
+
+		/* If displaying the 'servings' column. */
+		case 'servings' :
+
+			/* Get the post meta. */
+			$servings = get_post_meta( $post_id, 'servings', true );
+
+			/* If no duration is found, output a default message. */
+			if ( empty( $servings ) )
+				echo __( 'N/A' );
+
+			/* If there is a servings, format it to the text string. */
+			else
+				echo $servings;
+
+		break;
 		
 
 		/* Just break out of the switch statement for everything else. */
@@ -211,8 +229,9 @@ add_action( 'manage_recipe_posts_custom_column', 'manage_recipe_columns', 10, 2 
 function recipe_sortable_columns( $columns ) {
 
 	$columns['totaltime'] = 'totaltime';
-	$columns['cooktime'] = 'cooktime';
 	$columns['preptime'] = 'preptime';
+	// $columns['cooktime'] = 'cooktime';
+	$columns['servings'] = 'servings';
 
 	return $columns;
 }
@@ -274,6 +293,19 @@ function sort_recipe( $vars ) {
 				$vars,
 				array(
 					'meta_key' => 'cooktime',
+					'orderby' => 'meta_value'
+				)
+			);
+		}
+		
+		/* Check if 'orderby' is set to 'duration'. */
+		if ( isset( $vars['orderby'] ) && 'servings' == $vars['orderby'] ) {
+
+			/* Merge the query vars with our custom variables. */
+			$vars = array_merge(
+				$vars,
+				array(
+					'meta_key' => 'servings',
 					'orderby' => 'meta_value'
 				)
 			);
@@ -361,6 +393,13 @@ function ctp_recipe_times() {
 	echo '<p>Cook Time? (in minutes)</p>';
 	// Echo out the field
 	echo '<input type="text" name="cooktime" value="' . $cooktime  . '" class="widefat" />';
+	
+	// Get the cook time data if its already been entered
+	$servings = get_post_meta($post->ID, 'servings', true);
+	
+	echo '<p>Servings</p>';
+	// Echo out the field
+	echo '<input type="text" name="servings" value="' . $servings  . '" class="widefat" />';	
 
 }
 
@@ -410,6 +449,7 @@ function wpt_save_recipes_meta($post_id, $post) {
 	$recipes_meta['totaltime'] = $_POST['totaltime'];
 	$recipes_meta['preptime'] = $_POST['preptime'];
 	$recipes_meta['cooktime'] = $_POST['cooktime'];
+	$recipes_meta['servings'] = $_POST['servings'];
 	$recipes_meta['tagline'] = $_POST['tagline'];
 	$recipes_meta['ingredients'] = $_POST['ingredients'];
 	
