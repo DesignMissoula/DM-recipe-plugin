@@ -44,11 +44,9 @@ class Recipe_Widget extends WP_Widget {
 											'terms' => $fruit
 		                                ))));
 				?>
-				<div class="small-12 columns">
-				<ul class="small-block-grid-1 medium-block-grid-2 large-block-grid-2">
 				<?php foreach ( $fruits_query as $post ) : setup_postdata( $post ); ?>
 					<?php if ( has_post_thumbnail() ) : ?>
-						<?php the_post_thumbnail( 'medium', array('class' => 'th img-responsive') ); ?>
+						<?php the_post_thumbnail( 'large', array('class' => 'th img-responsive') ); ?>
 					<?php endif; ?>	
 					<h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
 					<?php // the_excerpt(); ?>
