@@ -4,12 +4,15 @@
 Plugin Name:       Chelan Recipe Plugin
 Plugin URI:        https://chelanfruit.com
 Description:       Recipes
-Version:           1.1.7
+Version:           1.2.1
 Author:            Bradford Knowlton
 GitHub Plugin URI: https://github.com/DesignMissoula/chelan-recipe-plugin
 Requires WP:       3.8
 Requires PHP:      5.3
 */
+
+require_once ( plugin_dir_path( __FILE__ ) . '/inc/class-recipe-widget.php' );
+
 
 function recipe_rewrite_flush() {
     // First, we "add" the custom post type via the above written function.
