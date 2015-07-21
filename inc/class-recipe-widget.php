@@ -48,7 +48,7 @@ class Recipe_Widget extends WP_Widget {
 					<?php if ( has_post_thumbnail() ) : ?>
 						<?php the_post_thumbnail( 'large', array('class' => 'th img-responsive') ); ?>
 					<?php endif; ?>	
-					<h4><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h4>
+					<h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>
 					<?php // the_excerpt(); ?>
 					<a href="<?php the_permalink(); ?>" class="view-more"><?php _e('View full recipe &rsaquo;'); ?></a>
 				<?php 
